@@ -1,20 +1,25 @@
 package admin.restController;
 
 import admin.dao.domain.Employee;
+import admin.dao.domain.HR;
+import admin.dao.repo.HRRepository;
 import admin.service.EmployeeService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/employee", produces = "application/json")
 @CrossOrigin(origins = "*")
 public class employeeController {
     private EmployeeService employeeService;
-
+    @Autowired
+    private HRRepository hrRepository;
     @Autowired
     void setEmployeeService(EmployeeService employeeService) {
         this.employeeService = employeeService;
@@ -64,5 +69,17 @@ public class employeeController {
             employeeService.updateEmployeeGender(origin, employee.getGender());
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/delete/{eid}/{hrid}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteEmployee(@PathVariable("eid") Long eid, @PathVariable("hrid") Long hrid) {
+        Optional<HR> hr = hrRepository.findById(hrid);
+        if(hr.isPresent()){
+            Employee em = employeeService.findById(eid);
+            employeeService.delEmployee(em, hrid, hr.get().getName(), hr.get().getCompany());
+        }
+
     }
 }
