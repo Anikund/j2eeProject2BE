@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,5 +82,15 @@ public class employeeController {
             employeeService.delEmployee(em, hrid, hr.get().getName(), hr.get().getCompany());
         }
 
+    }
+
+    @PatchMapping("/hire/{eid}/{hrid}")
+    public ResponseEntity<Employee> hire(@PathVariable Long eid, @PathVariable Long hrid) {
+        Optional<HR> hr = hrRepository.findById(hrid);
+        if (!hr.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        employeeService.hireEmployee(employeeService.findById(eid), hr.get());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

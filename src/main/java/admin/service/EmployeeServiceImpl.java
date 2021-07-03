@@ -107,6 +107,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Boolean addEmployee(Employee employee) {
+        employee.setInDate(new java.sql.Date(new java.util.Date().getTime()));
         employeeRepo.save(employee);
         return Boolean.TRUE;
     }

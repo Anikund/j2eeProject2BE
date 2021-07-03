@@ -4,6 +4,7 @@ import admin.dao.domain.HR;
 import admin.dao.repo.HRRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -15,9 +16,15 @@ public class hrController {
     @Autowired
     HRRepository hrRepo;
 
-    @GetMapping("/get")
-    public HR getHR(@RequestBody Long hrId) {
-        return hrRepo.getById(hrId);
+    @GetMapping("/get/{hrid}")
+    public ResponseEntity<HR> getHR(@PathVariable("hrid") Long hrId) {
+        Optional<HR> hr = hrRepo.findById(hrId);
+        if (hr.isPresent()) {
+            return new ResponseEntity<>(hr.get(), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
     @PatchMapping("/update")
